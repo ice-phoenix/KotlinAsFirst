@@ -13,6 +13,20 @@ package lesson8.task1
  *   21  22  23  24  25  26  27  28
  *     12  13  14  15  16  17  18
  *       03  04  05  06  07  08
+ *
+ * В примерах к задачам используются те же обозначения точек,
+ * к примеру, 16 соответствует HexPoint(x = 6, y = 1), а 41 -- HexPoint(x = 1, y = 4).
+ *
+ * В задачах, работающих с шестиугольниками на сетке, считать, что они имеют
+ * _плоскую_ ориентацию:
+ *  __
+ * /  \
+ * \__/
+ *
+ * со сторонами, параллельными координатным осям _плоской_ сетки.
+ *
+ * Более подробно про шестиугольные системы координат можно почитать по следующей ссылке:
+ *   https://www.redblobgames.com/grids/hexagons/
  */
 data class HexPoint(val x: Int, val y: Int) {
     /**
@@ -69,12 +83,99 @@ class HexSegment(val begin: HexPoint, val end: HexPoint) {
      */
     fun isValid(): Boolean = TODO()
 
+    /**
+     * Средняя
+     *
+     * Вернуть направление отрезка (см. описание класса Direction ниже).
+     * Для "правильного" отрезка выбирается одно из первых шести направлений,
+     * для "неправильного" -- INCORRECT.
+     */
+    fun direction(): Direction = TODO()
+
     override fun equals(other: Any?) =
         other is HexSegment && (begin == other.begin && end == other.end || end == other.begin && begin == other.end)
 
     override fun hashCode() =
         begin.hashCode() + end.hashCode()
 }
+
+/**
+ * Направление отрезка на гексагональной сетке.
+ * Если отрезок "правильный", то он проходит вдоль одной из трёх осей шестугольника.
+ * Если нет, его направление считается INCORRECT
+ */
+enum class Direction {
+    RIGHT,      // слева направо, например 30 -> 34
+    UP_RIGHT,   // вверх-вправо, например 32 -> 62
+    UP_LEFT,    // вверх-влево, например 25 -> 61
+    LEFT,       // справа налево, например 34 -> 30
+    DOWN_LEFT,  // вниз-влево, например 62 -> 32
+    DOWN_RIGHT, // вниз-вправо, например 61 -> 25
+    INCORRECT;  // отрезок имеет изгиб, например 30 -> 55 (изгиб в точке 35)
+
+    /**
+     * Простая
+     *
+     * Вернуть направление, противоположное данному.
+     * Для INCORRECT вернуть INCORRECT
+     */
+    fun opposite(): Direction = TODO()
+
+    /**
+     * Средняя
+     *
+     * Вернуть направление, повёрнутое относительно
+     * заданного на 60 градусов против часовой стрелки.
+     *
+     * Например, для RIGHT это UP_RIGHT, для UP_LEFT это LEFT, для LEFT это DOWN_LEFT.
+     * Для направления INCORRECT бросить исключение IllegalArgumentException.
+     * При решении этой задачи попробуйте обойтись без перечисления всех семи вариантов.
+     */
+    fun next(): Direction = TODO()
+
+    /**
+     * Простая
+     *
+     * Вернуть true, если данное направление совпадает с other или противоположно ему.
+     * INCORRECT не параллельно никакому направлению, в том числе другому INCORRECT.
+     */
+    fun isParallel(other: Direction): Boolean = TODO()
+}
+
+/**
+ * Средняя
+ *
+ * Сдвинуть точку в направлении direction на расстояние distance.
+ * Бросить IllegalArgumentException(), если задано направление INCORRECT.
+ * Для расстояния 0 и направления не INCORRECT вернуть ту же точку.
+ * Для отрицательного расстояния сдвинуть точку в противоположном направлении на -distance.
+ *
+ * Примеры:
+ * 30, direction = RIGHT, distance = 3 --> 33
+ * 35, direction = UP_LEFT, distance = 2 --> 53
+ * 45, direction = DOWN_LEFT, distance = 4 --> 05
+ */
+fun HexPoint.move(direction: Direction, distance: Int): HexPoint = TODO()
+
+/**
+ * Сложная
+ *
+ * Найти кратчайший путь между двумя заданными гексами, представленный в виде списка всех гексов,
+ * которые входят в этот путь.
+ * Начальный и конечный гекс также входят в данный список.
+ * Если кратчайших путей существует несколько, вернуть любой из них.
+ *
+ * Пример (для координатной сетки из примера в начале файла):
+ *   pathBetweenHexes(HexPoint(y = 2, x = 2), HexPoint(y = 5, x = 3)) ->
+ *     listOf(
+ *       HexPoint(y = 2, x = 2),
+ *       HexPoint(y = 2, x = 3),
+ *       HexPoint(y = 3, x = 3),
+ *       HexPoint(y = 4, x = 3),
+ *       HexPoint(y = 5, x = 3)
+ *     )
+ */
+fun pathBetweenHexes(from: HexPoint, to: HexPoint): List<HexPoint> = TODO()
 
 /**
  * Очень сложная
